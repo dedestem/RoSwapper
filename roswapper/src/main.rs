@@ -1,10 +1,19 @@
+// Libaries
 use rdev::{listen, Event, EventType, Button};
+
+// Variables
+static mut KEY: u8 = 1;
+
+//Functions
+
+// Main - Start
 fn main() {
     if let Err(error) = listen(callback) {
         println!("Error: {:?}", error);
     }
 }
 
+// Detect keys
 fn callback(event: Event) {
     match event.event_type {
         EventType::ButtonPress(button) => {
@@ -18,11 +27,24 @@ fn callback(event: Event) {
     }
 }
 
-
+// Handle keys
 fn forward() {
-    println!("Side Button 2 (Forward) pressed");
+    unsafe {
+        KEY = KEY + 1
+    }
+    output();
 }
 
 fn backward() {
-    println!("Side Button 1 (Back) pressed");
+    unsafe {
+        KEY = KEY - 1
+    }
+    output();
+}
+
+// Handle output
+fn output() {
+    unsafe {
+        println!("{}", KEY);
+    }
 }
