@@ -76,6 +76,10 @@ fn press_number(number: u8) {
     };
 
     // Simulate the key press and release
-    EventType::KeyPress(key);
-    EventType::KeyRelease(key);
+    if let Err(SimulateError) = simulate(&EventType::KeyPress(key)) {
+        println!("Failed to simulate key press");
+    }
+    if let Err(SimulateError) = simulate(&EventType::KeyRelease(key)) {
+        println!("Failed to simulate key release");
+    }
 }
