@@ -1,4 +1,4 @@
-use rdev::{listen, Event, EventType, Button};
+use rdev::{listen, Event, EventType, Button, simulate, Key, SimulateError};
 use std::sync::{Arc, Mutex};
 
 // Main - Start
@@ -31,8 +31,8 @@ fn callback(event: Event, key: &Arc<Mutex<u8>>) {
 // Handle keys
 fn forward(key: &Arc<Mutex<u8>>) {
     let mut key = key.lock().unwrap();
-    if *key == 10 {
-        *key = 1;
+    if *key == 9 {
+        *key = 0;
     } else {
         *key += 1;
     }
@@ -41,16 +41,41 @@ fn forward(key: &Arc<Mutex<u8>>) {
 
 fn backward(key: &Arc<Mutex<u8>>) {
     let mut key = key.lock().unwrap();
-    if *key == 1 {
-        *key = 10;
+    if *key == 0 {
+        *key = 9;
     } else {
         *key -= 1;
     }
-    
     output(*key);
 }
 
 // Handle output
 fn output(key: u8) {
     println!("{}", key);
+    if key == 10 {
+        press_number(0);
+    } else {
+        press_number(key);
+    }
+}
+
+fn press_number(number: u8) {
+    // Convert number to the corresponding key
+    let key = match number {
+        0 => Key::Num0,
+        1 => Key::Num1,
+        2 => Key::Num2,
+        3 => Key::Num3,
+        4 => Key::Num4,
+        5 => Key::Num5,
+        6 => Key::Num6,
+        7 => Key::Num7,
+        8 => Key::Num8,
+        9 => Key::Num9,
+        _ => unreachable!(),
+    };
+
+    // Simulate the key press and release
+    EventType::KeyPress(key);
+    EventType::KeyRelease(key);
 }
