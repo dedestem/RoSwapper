@@ -1,5 +1,6 @@
 use rdev::{listen, Event, EventType, Button, simulate, Key, SimulateError};
 use std::sync::{Arc, Mutex};
+use std::{thread, time};
 
 // Main - Start
 fn main() {
@@ -51,7 +52,7 @@ fn backward(key: &Arc<Mutex<u8>>) {
 
 // Handle output
 fn output(key: u8) {
-    println!("{}", key);
+    println!("Output Key: {}", key);
     if key == 10 {
         press_number(0);
     } else {
@@ -75,11 +76,17 @@ fn press_number(number: u8) {
         _ => unreachable!(),
     };
 
-    // Simulate the key press and release
+    // Debug statement to check the key being pressed
+    println!("Pressing Key: {:?}", key);
+
+    // Simulate the key press and release with delays
     if let Err(SimulateError) = simulate(&EventType::KeyPress(key)) {
         println!("Failed to simulate key press");
     }
+    thread::sleep(time::Duration::from_millis(50)); // 50 ms delay
     if let Err(SimulateError) = simulate(&EventType::KeyRelease(key)) {
         println!("Failed to simulate key release");
     }
+    println!("Released Key: {:?}", key);
 }
+
